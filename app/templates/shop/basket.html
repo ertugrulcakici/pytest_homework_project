@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Basket{% endblock %}
+
+{% block content %}
+<h1>Your Shopping Basket</h1>
+
+{% if basket_items %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in basket_items %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                {% if item.image_url %}
+                                    <img src="{{ item.image_url }}" alt="{{ item.name }}" style="width: 50px; height: 50px;" class="me-3">
+                                {% endif %}
+                                <div>
+                                    <h5 class="mb-0">{{ item.name }}</h5>
+                                    <small class="text-muted">{{ item.description | truncate(60) }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${{ "%.2f"|format(item.price) }}</td>
+                        <td style="width: 150px;">
+                            <form action="{{ url_for('shop.update_item_quantity', basket_item_id=item.id) }}" method="post" class="d-flex">
+                                <input type="number" name="quantity" class="form-control form-control-sm" value="{{ item.quantity }}" min="1" max="99">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary ms-2">Update</button>
+                            </form>
+                        </td>
+                        <td>${{ "%.2f"|format(item.price * item.quantity) }}</td>
+                        <td>
+                            <form action="{{ url_for('shop.remove_item_from_basket', basket_item_id=item.id) }}" method="post">
+                                <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="text-end fw-bold">Total:</td>
+                    <td colspan="2" class="fw-bold">${{ "%.2f"|format(total) }}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    
+    <div class="d-flex justify-content-between mt-4">
+        <a href="{{ url_for('shop.items') }}" class="btn btn-outline-secondary">Continue Shopping</a>
+        <button class="btn btn-success" onclick="alert('Checkout functionality would go here')">Proceed to Checkout</button>
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        Your basket is empty. <a href="{{ url_for('shop.items') }}">Browse our shop</a> to add items.
+    </div>
+{% endif %}
+{% endblock %}

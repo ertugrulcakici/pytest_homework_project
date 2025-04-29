@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="mb-0">Your Profile</h2>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Personal Information</h4>
+                <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Date of Birth:</strong> {{ user.date_of_birth }}</p>
+                <p><strong>Account Created:</strong> {{ user.created_at }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

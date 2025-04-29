@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Shop Items{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1>Shop Items</h1>
+    </div>
+    <div class="col-md-4">
+        <form action="{{ url_for('shop.search') }}" method="get" class="d-flex">
+            <input type="text" name="query" class="form-control me-2" placeholder="Search items..." value="{{ query if query }}">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
+</div>
+
+{% if items %}
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for item in items %}
+            <div class="col">
+                <div class="card h-100">
+                    {% if item.image_url %}
+                        <img src="{{ item.image_url }}" class="card-img-top" alt="{{ item.name }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ item.name }}</h5>
+                        <p class="card-text">{{ item.description }}</p>
+                        <p class="fw-bold">${{ "%.2f"|format(item.price) }}</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                        <a href="{{ url_for('shop.item_detail', item_id=item.id) }}" class="btn btn-secondary">View Details</a>
+                        {% if session.user_id %}
+                            <form action="{{ url_for('shop.add_item_to_basket', item_id=item.id) }}" method="post">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn-primary">Add to Basket</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        {% if query %}
+            No items found matching "{{ query }}".
+        {% else %}
+            No items available in the shop at the moment.
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}

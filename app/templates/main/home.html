@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="jumbotron bg-light p-5 rounded-3 mb-4">
+    <h1 class="display-4">Welcome to Our Online Shop</h1>
+    <p class="lead">Browse our collection of products and add them to your basket.</p>
+    <hr class="my-4">
+    <p>Sign up for an account to start shopping!</p>
+    <a class="btn btn-primary btn-lg" href="{{ url_for('shop.items') }}" role="button">Browse Products</a>
+</div>
+
+<h2 class="mb-4">Featured Products</h2>
+
+<div class="row row-cols-1 row-cols-md-4 g-4">
+    {% for item in items[:8] %}
+        <div class="col">
+            <div class="card h-100">
+                {% if item.image_url %}
+                    <img src="{{ item.image_url }}" class="card-img-top" alt="{{ item.name }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.name }}</h5>
+                    <p class="card-text">{{ item.description | truncate(80) }}</p>
+                    <p class="fw-bold">${{ "%.2f"|format(item.price) }}</p>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <a href="{{ url_for('shop.item_detail', item_id=item.id) }}" class="btn btn-sm btn-secondary">View</a>
+                    {% if session.user_id %}
+                        <form action="{{ url_for('shop.add_item_to_basket', item_id=item.id) }}" method="post">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="btn btn-sm btn-primary">Add to Basket</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="d-flex justify-content-center mt-4">
+    <a href="{{ url_for('shop.items') }}" class="btn btn-outline-primary">View All Products</a>
+</div>
+{% endblock %}
